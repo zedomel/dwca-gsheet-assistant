@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<?!= include('Header'); ?>
+		<?!= include('EMLDialogCSS'); ?>
+		<?!= include('EMLDialogJS'); ?>
+
+	</head>
+	<body>
+		<? var data = getEMLData(); ?>
+		<div class="eml">
+			<div class="inline form-group">
+  				<label for="title">Title</label>
+  				<input type="text" id="title" class="form-control-plaintext" value="<?= data['title']; ?>">
+			</div>
+
+			<div class="creators margin-bottom">
+  				<h6>Creators:</h6>
+  				<div>
+	  				<div class="inline form-group">
+	  					<label for="creator-given-name">Given name</label>
+	  					<input type="text" id="creator-given-name"/>
+					</div>
+					<div class="inline form-group">
+	  					<label for="creator-surname">Surname</label>
+	  					<input type="text" id="creator-surname"/>
+					</div>
+				</div>
+				<div>
+					<div class="inline form-group">
+						<label for="creator-email">Email</label>
+						<input type="text" id="creator-email"/>
+					</div>
+					<div class="inline form-group">
+						<label for="creator-institution-name">Institution name</label>
+						<input type="text" id="creator-institution-name"/>
+					</div>
+				</div>
+				<button id="add-creator">Add creator</button>
+			</div>
+
+			<div class="creators-list">
+				<div class="block form-group">
+			  		<select id="creators" size="5" class="custom-select" multiple>
+			  			<? if( data['creators'].length > 0 ) { ?>
+			  				<? for(var i = 0; i < data['creators'].length; i++ ) { ?>
+			  					<option value="<?= data['creators'][i] ?>"><?= data['creators'][i] ?></option>
+			  				<? } ?>
+			  			<? } ?>
+			  		</select>
+			  		<button id="remove-creator" class="margin-top">Remove creator</button>
+				</div>
+			</div>
+
+
+			<div class="form-group">
+  				<h6>Data Prodiver:</h6>
+  				<div class="inline form-group">
+  					<label for="given-name">Given name</label>
+  					<input type="text" id="given-name" value="<?= data['given-name'] ?>">
+				</div>
+				<div class="inline form-group">
+  					<label for="surname">Surname</label>
+  					<input type="text" id="surname" value="<?= data['surname'] ?>">
+				</div>
+
+				<div class="inline form-group">
+					<label for="email">Email</label>
+					<input type="text" id="email" value="<?= data['email'] ?>">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="inline form-group">
+					<label for="institution-name">Institution name</label>
+					<input type="text" id="institution-name" value="<?= data['institution-name'] ?>">
+				</div>
+
+				<div class="inline form-group">
+					<label for="institution-code">Institution code</label>
+					<input type="text" id="institution-code" value="<?= data['institution-code'] ?>">
+				</div>
+
+				<div class="inline form-group">
+					<label for="dataset-name">Dataset name</label>
+					<input type="text" id="dataset-name" value="<?= data['dataset-name'] ?>">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="inline form-group">
+					<label for="dataset-id">Dataset ID</label>
+					<input type="text" id="dataset-id" value="<?= data['dataset-id'] ?>">
+				</div>
+
+				<div class="inline form-group">
+					<label for="keywords">Keywords (separared by ;)</label>
+					<input type="text" id="keywords" value="<?= data['keywords'] ?>">
+				</div>
+			</div>
+
+			<div class="form-group">
+  				<label for="abstract">Abstract (description of the dataset)</label>
+  				<textarea id="abstract" rows="5" class="form-control"><?= data['abstract'] ?></textarea>
+			</div>
+
+			<div class="form-group">
+  				<label for="additional-info">Additional information</label>
+  				<textarea id="additional-info" rows="5" class="form-control"><?= data['additional-info'] ?></textarea>
+			</div>
+
+			<div class="form-group">
+  				<label for="taxonomic-coverage">General taxonomic coverage</label>
+  				<textarea id="taxonomic-coverage" rows="5" class="form-control"><?= data['taxonomic-coverage'] ?></textarea>
+			</div>
+			<div>
+  				<input type="checkbox" id="auto-taxonomic-coverage" <? if(data['auto-taxonomic-coverage']) { ?> checked <? } ?>>
+  				<label for="auto-taxonomic-coverage">Auto generate taxonomic coverage from field:
+  					<div class="inline form-group">
+  						<? var fields = getSpredsheetFields(); ?>
+				  		<select id="taxonomic-field">
+				    		<? for(var i = 0; i < fields.length; i++ ) { ?>
+				    			<option value="<?= fields[i].index ?>" <? if(data['taxonomic-field'] == fields[i].term) { ?> selected <? } ?>><?= fields[i].term ?></option>
+							<?  } ?>
+				  		</select>
+					</div>
+				</label>
+			</div>
+
+			<div class="form-group">
+  				<label for="geographic-coverage">General geographic coverage</label>
+  				<textarea id="geographic-coverage" rows="5" class="form-control"><?= data['geographic-coverage'] ?></textarea>
+			</div>
+			<div>
+  				<label for="auto-geographic-coverage">
+  					<input type="checkbox" id="auto-geographic-coverage" <? if (data['auto-geographic-coverage']) { ?> checked <? } ?>>
+  					Auto generate geographic coverage from dwc:decimalLongitude and dwc:decimalLatitude fields?
+  				</label>
+			</div>
+
+
+			<div class="form-group">
+  				<label for="purpose">Purpose</label>
+  				<textarea id="purpose" rows="5" class="form-control"><?= data['purpose'] ?></textarea>
+			</div>
+
+			<div class="form-group">
+  				<label for="rights">Intellectual rights</label>
+  				<textarea id="rights" rows="5" class="form-control"><?= data['rights'] ?></textarea>
+			</div>
+
+			<div class="block form-group">
+			  <label for="lang">Metadata language</label>
+			  <select id="lang">
+			  	<option value="en" <? if(data['lang'] == 'en') { ?> selected <? } ?>>en - English</option>
+			  	<option value="pt" <? if(data['lang'] == 'pt') { ?> selected <? } ?>>pt - Portuguese</option>
+			    <option value="es" <? if(data['lang'] == 'es') { ?> selected <? } ?>>es - Spanish</option>
+			  </select>
+			</div>
+		</div>
+
+		<div class="eml-content">
+			<div>
+				<input type="checkbox" id="enable-manual-eml" <? if (data['enable-manual-eml']) { ?> checked <? } ?>>
+				<label for="enable-manual-eml">Manually enter EML content</label>
+			</div>
+			<div class="form-group eml-editor">
+  				<label for="manual-eml">Enter your EML content below:</label>
+  				<textarea id="manual-eml" rows="30" class="form-control"><?= data['manual-eml'] ?></textarea>
+			</div>
+		</div>
+
+		<button class="action" id="save-eml">Save</button>
+	</body>
+</html>

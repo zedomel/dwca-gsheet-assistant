@@ -1,0 +1,55 @@
+<script>
+    $(function() {
+        $('#enable-manual-eml').change(function(e){
+            $('.eml').toggle(!this.checked);
+            $('.eml-editor').toggle(this.checked);
+        });
+        // Fire event
+        $('#enable-manual-eml').change();
+
+        // Add creator to creators list
+        $('#add-creator').click(function(e){
+            var giveName = $('#creator-given-name').val(),
+                surname = $('#creator-surname').val(),
+                email = $('#creator-email').val(),
+                org = $('#creator-institution-name').val();
+
+            if( giveName && surname ){
+                var op = $(document.createElement("option"));
+                var value =  giveName + ";" + surname + ";" + email + ";" + org;
+                op.prop('value', value);
+                op.append(document.createTextNode(value));
+                $('#creators').append(op);
+            }
+        });
+
+        // Remove creators from creators list
+        $('#remove-creator').click(function(e){
+            $("#creators option:selected").remove();
+        });
+
+        $('#save-eml').click(function(e){
+            var data = {};
+            $('input, select, textarea').each(function(){
+                var val;
+                var type = $(this).prop('type');
+
+                if ( type == 'checkbox' ){
+                    val = this.checked;
+                }
+                else{
+                    val =  $(this).val();
+                }
+
+                data[$(this).prop('id')] = val;
+            });
+
+            data['creators'] = $('#creators option').map(function(){
+                return $(this).val();
+            }).get();
+
+            //Save EML
+            google.script.run.saveEML(data);
+        });
+    });
+</script>

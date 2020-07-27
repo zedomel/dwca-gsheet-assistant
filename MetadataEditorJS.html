@@ -1,0 +1,111 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sigma.js/1.2.1/sigma.min.js" integrity="sha512-4+XX9O3GEcpTWGNW7m3w/ORF91L4zUX01/U3wAoWIXp1P+LRBEqutZdQIFUeHSa0cJRZ9LPM+GOWus8h8TlYhg==" crossorigin="anonymous"></script>
+
+<script>
+$(function(){
+    sigma.utils.pkg('sigma.canvas.nodes');
+    sigma.canvas.nodes.image = (function() {
+        var _cache = {},
+        _loading = {},
+        _callbacks = {};
+
+        // Return the renderer itself:
+        var renderer = function(node, context, settings) {
+            var args = arguments,
+            prefix = settings('prefix') || '',
+            size = node[prefix + 'size'],
+            color = node.color || settings('defaultNodeColor'),
+            data = node.data;
+
+            context.save();
+
+            var img = new Image();
+            img.src = data;
+
+            // Draw the clipping disc:
+            context.beginPath();
+            context.arc(
+                node[prefix + 'x'],
+                node[prefix + 'y'],
+                node[prefix + 'size'],
+                0,
+                Math.PI * 2,
+                true
+            );
+            context.closePath();
+            context.clip();
+
+            // Draw the image
+            context.drawImage(
+                img,
+                node[prefix + 'x'] - size,
+                node[prefix + 'y'] - size,
+                2 * size,
+                2 * size
+            );
+
+            // Quit the "clipping mode":
+            context.restore();
+
+            // Draw the border:
+            context.beginPath();
+            context.arc(
+                node[prefix + 'x'],
+                node[prefix + 'y'],
+                node[prefix + 'size'],
+                0,
+                Math.PI * 2,
+                true
+            );
+            context.lineWidth = size / 5;
+            context.strokeStyle = node.color || settings('defaultNodeColor');
+            context.stroke();
+        }
+
+        return renderer;
+    })();
+
+
+    function coreSheetSelected(response) {
+        if (response && response.error) {
+            $('#coreSheetIndex').val('');
+            showOKAlert('Error', response.message);
+        } else {
+            google.script.run.withSuccessHandler(updateDwcArchive).getDwCArchiveSchema();
+        }
+    }
+
+    function dwcArchiveGenerated(response) {
+        if (response && response.error) {
+            showOKAlert('Alert', response.message);
+        } else {
+
+        }
+    }
+
+    function updateDwcArchive(dwcArchiveSchema) {
+        dwcaSchema.graph.clear();
+        dwcaSchema.graph.read(dwcArchiveSchema);
+        dwcaSchema.refresh();
+    }
+
+    //Initialize DwC-Archive Graph
+    var dwcaSchema = new sigma('dwca-schema');
+    if ($('#coreSheetIndex').val() > 0) {
+        google.script.run.withSuccessHandler(updateDwcArchive).getDwCArchiveSchema();
+    }
+
+    $('#coreSheetIndex').change(function(e){
+        var sheetIndex = $(this).val();
+        if (sheetIndex > 0) {
+            google.script.run.withSuccessHandler(coreSheetSelected).setCoreSheet(sheetIndex);
+        }
+    });
+
+    $('#generate-dwca').click(function(e){
+        if ($('#coreSheetIndex').val() > 0) {
+            // Generate DwC-Archive
+            google.script.run.withSuccessHandler(dwcArchiveGenerated).generateDwCA();
+        }
+    });
+});
+</script>

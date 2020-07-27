@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<?!= include('Header'); ?>
+		<?!= include('MetadataEditorCSS'); ?>
+		<?!= include('MetadataEditorJS'); ?>
+	</head>
+	<body>
+		<?
+			var mappedSheets = getMappedSheets();
+			var coreSheet = null;
+			for(var i = 0; i < mappedSheets.length; i++){
+				if(mappedSheets[i].core) {
+					coreSheet = mappedSheets[i];
+					break;
+				}
+			}
+		?>
+		<div class="dwca-metadata">
+			<? if( mappedSheets.length > 1) { ?>
+				<div class="row">
+					<h5 class="col-12">Select Core Sheet</h5>
+					<div class="form-group form-inline col-12">
+						<label for="coreSheetIndex">Core sheet:</label>
+						<select class="form-control" id="coreSheetIndex">
+								<option value=""></option>
+							<? for(var i = 0; i < mappedSheets.length; i++) { ?>
+								<option value="<?= mappedSheets[i].index ?>" <? if(mappedSheets[i].core) { ?> selected <? } ?>><?= mappedSheets[i].name ?></option>
+							<? } ?>
+						</select>
+					</div>
+				</div>
+
+				<div class="relationship row">
+					<h5 class="col-12">Darwin Core Archive Schema</h5>
+					<div id="dwca-schema" class="row"></div>
+					<div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+				</div>
+			<? } ?>
+
+			<div class="generate-dwca">
+				<button class="action" id="generate-dwca">Generate DwC-Archive</button>
+			</div>
+		</div>
+	</body>
+</html>
