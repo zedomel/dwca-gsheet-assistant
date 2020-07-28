@@ -64,9 +64,8 @@ function generateDwCA(data){
     if ( result && result.id ) {
       prop.setProperty('zedonoId', result.id);
       result = uploadToZenodo_(result, dwcArchive);
-      Logger.log(result);
       if (result) {
-        showurl(result.links.download);
+        showurl(result.metadata.doi_url);
       }
     } else {
       // Download DwCA
