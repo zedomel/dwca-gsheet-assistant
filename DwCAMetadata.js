@@ -7,8 +7,8 @@
 function openDwCAMetadataEditor(){
 	var html = HtmlService.createTemplateFromFile('MetadataEditor')
 		.evaluate()
-      	.setWidth(600)
-      	.setHeight(800);
+      	.setWidth(400)
+      	.setHeight(500);
   	SpreadsheetApp.getUi()
       	.showModalDialog(html, 'DwC-Archive Metadata');
 }
@@ -55,7 +55,7 @@ function generateDwCA(data){
   while(iter.hasNext()) {
     var file = iter.next();
     if (!file.getName().endsWith('.zip')) {
-      blobsSource.push(iter.next().getBlob());
+      blobsSource.push(file.getBlob());
     }
   }
 
@@ -65,7 +65,7 @@ function generateDwCA(data){
       prop.setProperty('zedonoId', result.id);
       result = uploadToZenodo_(result, dwcArchive);
       if (result) {
-        showurl(result.metadata.doi_url);
+        showurl(result.doi_url);
       }
     } else {
       // Download DwCA

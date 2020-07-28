@@ -1,8 +1,8 @@
 // "YTUdjM4SvSZrYjwNqFaglSw9NFbDcpkb6dQiZ9Pfmeej9C1PsskWrIU67MLJ";
 
 
-var ROOT_FOLDER = "GBIF-DWCA";
-var PROP_FOLDER_KEY = "gbif-dwca-folder-key";
+const ROOT_FOLDER = "GBIF-DWCA";
+const PROP_FOLDER_KEY = "gbif-dwca-folder-key";
 
 /* What should the add-on do after it is installed */
 function onInstall(e) {
@@ -56,7 +56,7 @@ function onOpen(e) {
   var menu = SpreadsheetApp.getUi()
   .createAddonMenu();
   if( e && e.authMode == ScriptApp.AuthMode.NONE ){
-    menu.addItem('Start DwC-archive', 'initAddon');
+    menu.addItem('Start DwC-Archive', 'initAddon');
     menu.addToUi();
   } else {
     // Initilize menu
@@ -77,7 +77,7 @@ function initMenu() {
     menu.addItem("Generate DwC-Archive", "openDwCAMetadataEditor");
     menu.addItem("Settings", "showSidebar");
   } else {
-    menu.addItem('Start DwC-archive', 'initAddon');
+    menu.addItem('Start DwC-Archive', 'initAddon');
   }
 
   menu.addToUi();
@@ -87,7 +87,7 @@ function initMenu() {
 function showSidebar() {
   var html = HtmlService.createTemplateFromFile("sidemenu")
     .evaluate()
-    .setTitle("GBIF/DwC-Archive - Settings");
+    .setTitle("DwC-Archive - Settings");
   SpreadsheetApp.getUi().showSidebar(html);
 }
 
@@ -141,7 +141,7 @@ function getStandards(){
   return [
     {
       name: "Darwin Core",
-      uri: "https://raw.githubusercontent.com/tdwg/dwc/master/docs/xml/tdwg_dwcterms.xsd",
+      uri: "http://rs.tdwg.org/dwc/terms/",
       checked: true
     }
   ];

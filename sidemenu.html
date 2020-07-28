@@ -14,28 +14,28 @@
     <base target="_top">
     <script>
         $(function() {
-           $('#add-item').click(function(e){
-              var select = $("#dynamic-list");
-              var candidate = $("#candidate");
-              var op = $(document.createElement("option"));
-              op.prop('value', candidate.val());
-              op.append(document.createTextNode(candidate.val()));
-              select.append(op);
+           // $('#add-item').click(function(e){
+           //    var select = $("#dynamic-list");
+           //    var candidate = $("#candidate");
+           //    var op = $(document.createElement("option"));
+           //    op.prop('value', candidate.val());
+           //    op.append(document.createTextNode(candidate.val()));
+           //    select.append(op);
 
-              //google.script.run.insertDS(candidate.val());
-              candidate.val('');
-           });
+           //    //google.script.run.insertDS(candidate.val());
+           //    candidate.val('');
+           // });
 
-           $('#remove').click(function(e){
-             $("#dynamic-list option:selected").remove();
-           });
+           // $('#remove').click(function(e){
+           //   $("#dynamic-list option:selected").remove();
+           // });
 
-           $('#print').click(function(e){
-             var selected = $("#dynamic-list option:selected");
-             if ( selected.length > 0 ){
-                google.script.run.printDS();
-             }
-           });
+           // $('#print').click(function(e){
+           //   var selected = $("#dynamic-list option:selected");
+           //   if ( selected.length > 0 ){
+           //      google.script.run.printDS();
+           //   }
+           // });
 
            $('#save').click(function(e){
             var settings = {
@@ -70,7 +70,7 @@
 
         <span class="separator"></span>
 
-        <div class="standards">
+        <!-- <div class="standards">
           <div class="block">
             <input type="text" id="candidate"/>
             <button id="add-item">Add item</button>
@@ -90,7 +90,7 @@
           </div>
           <button id="remove">Remove</button>
           <button id="print">Print</button>
-        </div>
+        </div> -->
 
         <button id="save" class="action">Save</button>
       </div>

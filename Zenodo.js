@@ -14,7 +14,7 @@ function createZenodoDeposition_() {
                 publication_date: (new Date()).toISOString(),
                 title: eml['title'],
                 creators: eml['creators'].map(function(creator) { return {
-                    name: creator['surname'] + ", " + creator['giveNamve']
+                    name: creator['surname'] + ", " + creator['givenName']
                 }}),
                 description: eml['abstract'],
                 access_right: 'open',

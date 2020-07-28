@@ -121,7 +121,7 @@ function showurl(downloadURL) {
   .setWidth(250)
   .setHeight(60)
   .setTitle("Your DwC-Archive is ready!")
-  .setContent('<a href="' + downloadURL + '">Click here to download</a>');
+  .setContent('<a href="' + downloadURL + '" target="_blank">Click here to download</a>');
 
    SpreadsheetApp.getUi()
       .showModalDialog(html, 'Your DwC-Archive is ready!');
