@@ -80,35 +80,50 @@ function getSpredsheetFields(sheetIndex = 0, onlyIDs = false) {
  * @return {array} Darwin core terms
  */
 function xmltoArray() {
-  var url = 'https://raw.githubusercontent.com/tdwg/dwc/master/docs/xml/tdwg_dwcterms.xsd';
+  var url = 'https://dwc.tdwg.org/xml/tdwg_dwcterms.xsd';
   var response = UrlFetchApp.fetch(url);
   var xml = response.getContentText();
   var document = XmlService.parse(xml);
   var root = document.getRootElement();
   var xmlschema = XmlService.getNamespace('http://www.w3.org/2001/XMLSchema');
-  /*var $title = $xml.find( "title" );*/
-  var entries = root.getChildren();
+
+  var namespaces = {
+    dwc: 'http://rs.tdwg.org/dwc/terms/',
+    dcterms: 'http://purl.org/dc/terms/'
+  };
+
+  var groups = root.getChildren('group', xmlschema);
   var terms = [];
-  for (var i = 0; i < entries.length; i++) {
-    var nameval=entries[i].getAttribute('name');
-    var subgroup=entries[i].getAttribute('substitutionGroup');
-    if(nameval && !subgroup){
-      var abstract=entries[i].getAttribute('abstract');
-      if (!abstract && entries[i].getName()!='group'){
-        terms.push(nameval.getValue());
-      }
-      if(entries[i].getName()=='group') {
-        var sub1=entries[i].getChildren('sequence',xmlschema);
-        var subentries=sub1[0].getChildren();//SEQUENCES
-        var ll=subentries.length;
-        for (var j = 0; j < subentries.length; j++) {
-          sname=subentries[j].getAttribute('ref');
-          if (sname){
-            terms.push(sname.getValue());
-          }
-        }
+  for (var i = 0; i < groups.length; i++) {
+    var entries = groups[i].getChild('sequence', xmlschema).getChildren();
+    for (var j = 0; j < entries.length; j++) {
+      qname=entries[j].getAttribute('ref');
+      if (qname) {
+        terms.push(qname.getValue());
       }
     }
   }
-  return terms;
+
+  return {
+    namespaces: namespaces,
+    terms:  terms
+  };
+}
+
+function saveSettings(settings) {
+  var props = PropertiesService.getUserProperties();
+  props.setProperty('enableZenodo', settings.enableZenodo);
+  props.setProperty('zenodoToken', settings.zenodoToken);
+}
+
+function showurl(downloadURL) {
+  var html = HtmlService.createHtmlOutput()
+  .setWidth(250)
+  .setHeight(60)
+  .setTitle("Your DwC-Archive is ready!")
+  .setContent('<a href="' + downloadURL + '">Click here to download</a>');
+
+   SpreadsheetApp.getUi()
+      .showModalDialog(html, 'Your DwC-Archive is ready!');
+
 }

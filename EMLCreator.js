@@ -1,27 +1,28 @@
 
-var EML_KEYS = [
+const EML_KEYS = [
   'title',
   'creators',
+  // 'organization-code',
+  // 'dataset-name',
+  // 'dataset-id',
+  // 'keywords',
+  'abstract',
+  // 'additional-info',
+  // 'taxonomic-coverage',
+  // 'auto-taxonomic-coverage',
+  // 'taxonimic-field',
+  // 'geographic-coverage',
+  // 'auto-geographic-coverage',
+  // 'purpose',
+  // 'rights',
+  // 'lang',
+  // 'enable-manual-eml',
+  // 'manual-eml',
+  // Metadata Provider:
   'given-name',
   'surname',
   'email',
-  'institution-name',
-  'institution-code',
-  'dataset-name',
-  'dataset-id',
-  'keywords',
-  'abstract',
-  'additional-info',
-  'taxonomic-coverage',
-  'auto-taxonomic-coverage',
-  'taxonimic-field',
-  'geographic-coverage',
-  'auto-geographic-coverage',
-  'purpose',
-  'rights',
-  'lang',
-  'enable-manual-eml',
-  'manual-eml'
+  'organization-name',
 ];
 
 
@@ -31,58 +32,119 @@ var EML_KEYS = [
  * @param  {Folder} folder to create the EML file
  * @return {File} EML file
  */
-function createEML_(folder){
+function createEML_(folder) {
+  var props = PropertiesService.getDocumentProperties();
+  var eml = JSON.parse(props.getProperty('eml'));
+  var xml = '';
 
-  var hasEmlFile = folder.getFilesByName('eml.xml').hasNext();
-  if ( hasEmlFile ){
-    var ans = showYesNoAlert('EML Already exists', 'Would you like to overwrite the existing file?');
-    if ( !ans ){
-      return null;
+  if (eml['manual-eml'] == '') {
+    var root = XmlService.createElement("eml")
+    // Package ID will be filled with Zenodo Upload Key
+    .setAttribute("packageId", "")
+    .setAttribute("system", "https://zenodo.org")
+    .setAttribute("scope", "system")
+    .setNamespace(XmlService.getNamespace("eml", "https://eml.ecoinformatics.org/eml-2.2.0"))
+    .setNamespace(XmlService.getNamespace("dc", "http://purl.org/dc/terms/"))
+    .setNamespace(XmlService.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance"));
+
+    var dataset = XmlService.createElement("dataset");
+
+    var title = XmlService.createElement("title")
+       .setText(eml['title']);
+    dataset.addContent(title);
+
+    for(var i = 0; i < eml['creators'].length; i++) {
+      // Creator
+      var creator = eml['creators'][i];
+      var creatorElem = XmlService.createElement("creator")
+      .addContent(
+        XmlService.createElement("individualName")
+        .addContent(XmlService.createElement("givenName").setText(creator['givenName']))
+        .addContent(XmlService.createElement("surName").setText(creator['surname'])))
+      .addContent(XmlService.createElement("organizationName").setText(creator['org']));
+
+      if ( creator['email'] != '') {
+        creatorElem.addContent(
+          XmlService.createElement("electronicMailAddress").setText(creator['email']));
+      }
+
+      dataset.addContent(creatorElem);
     }
-  }
 
-  var root = XmlService.createElement("eml")
-     .setAttribute("packageId", "")
-     .setAttribute("system", "")
-     .setNamespace(XmlService.getNamespace("eml", "https://eml.ecoinformatics.org/eml-2.2.0"));
-
-  var dataset = XmlService.createElement("dataset");
-
-  var title = XmlService.createElement("title")
-     .setText("EML Title");
-  dataset.addContent(title);
-
-  // Creator
-  dataset.addContent(
-    XmlService.createElement("creator")
-    .setAttribute("id", "http://orcid.org/111111")
+    //Contact
+    var contact = eml['creators'][0];
+    var contactElem = XmlService.createElement("contact")
     .addContent(
       XmlService.createElement("individualName")
-      .addContent(XmlService.createElement("givenName").setText("Jose"))
-      .addContent(XmlService.createElement("givenName").setText("A."))
-      .addContent(XmlService.createElement("surName").setText("Salim"))
-    )
-    .addContent(XmlService.createElement("electronicMailAddress").setText("zedomel@gmail.com"))
-    .addContent(XmlService.createElement("userId").setAttribute("directory", "https://orcid.org").setText("https://orcid.org/1111-1111-1111")));
+      .addContent(XmlService.createElement("givenName").setText(contact['givenName']))
+      .addContent(XmlService.createElement("surName").setText(contact['surname'])))
+    .addContent(XmlService.createElement("organizationName").setText(contact['org']));
 
-  // Keywords
-  dataset.addContent(
-    XmlService.createElement("keywordSet")
-    .addContent(XmlService.createElement("keyword").setText("biomass"))
-    .addContent(XmlService.createElement("keyword").setText("productivity")));
+    if (contact['email'] != '') {
+      contactElem.addContent(
+        XmlService.createElement("electronicMailAddress").setText(contact['email']));
+    }
 
-  //Contact
-  dataset.addContent(
-    XmlService.createElement("contact")
-    .addContent(XmlService.createElement("references").setText("https://orcid.org/1111-1111-1111"))
-  );
+    dataset.addContent(contactElem);
 
-  root.addContent(dataset);
-  var document = XmlService.createDocument(root);
-  var xml = XmlService.getPrettyFormat().format(document);
+    // Medatada Provider
+    dataset.addContent(XmlService.createElement("metadataProvider")
+    .addContent(XmlService.createElement("individualName")
+      .addContent(XmlService.createElement("givenName").setText(eml['given-name']))
+      .addContent(XmlService.createElement("surName").setText(eml['surname'])))
+    .addContent(XmlService.createElement("organizationName").setText(eml['organization-name'])));
+
+    // Abstract
+    dataset.addContent(XmlService.createElement("abstract")
+      .addContent(XmlService.createElement("para").setText(eml['abstract'])));
+
+    // Keywords
+    if (eml['keywords'] != '') {
+      var keywords = eml['keywords'].split(';');
+      var keywordSet = XmlService.createElement("keywordSet");
+
+      for (var i = 0; i < keywords.length; i++) {
+        keywordSet.addContent(XmlService.createElement("keyword").setText(keywords[i]));
+      }
+
+      dataset.addContent(keywordSet);
+    }
+
+    // Additional Information
+    if (eml['additional-info'] != '') {
+      dataset.addContent(XmlService.createElement("additionalInfo")
+        .addContent(XmlService.createElement("para").setText(eml['additional-info'])));
+    }
+
+    // Intellectual rights
+    if (eml['rights'] != '') {
+      dataset.addContent(XmlService.createElement("intellectualRights")
+        .addContent(XmlService.createElement("para").setText(eml['rights'])));
+    }
+
+    // Language
+    if (eml['lang'] != '') {
+      dataset.addContent(XmlService.createElement("language").setText(eml['lang']));
+    }
+
+    root.addContent(dataset);
+    var document = XmlService.createDocument(root);
+    xml = XmlService.getPrettyFormat().format(document);
+  } else {
+    xml = eml['manual-eml'];
+  }
+
+  // Check if file already exists
+  var iter = folder.getFilesByName('eml.xml');
+  if (iter.hasNext()) {
+    var file = iter.next();
+    file.setContent(xml);
+    return file;
+  }
 
   //Output to file
   return folder.createFile("eml.xml", xml);
+
 }
 
 /**
@@ -93,58 +155,58 @@ function createEML_(folder){
  */
 function saveEML(data){
   var prop = PropertiesService.getDocumentProperties();
-  for(var i = 0; i < EML_KEYS.length; i++){
-    var key = EML_KEYS[i];
-    var value = '';
-    if ( data[key] ){
-      if( Array.isArray(data[key]) ){
-        value = data[key].join('|');
-      }
-      else{
-        value = data[key]
+
+  // Check required fields
+  if ( data['enable-manual-eml'] &&
+    (data['manual-eml'] === undefined || data['manual-eml'] == '')) {
+      return {
+        error: true,
+        message: "EML can't be empty! Please, provide an EML metadata or disable the manually enter of EML content"
+      };
+  } else {
+    for(var i = 0; i < EML_KEYS.length; i++) {
+      var key = EML_KEYS[i];
+      if ( data[key] === undefined || data[key] == '') {
+        return {
+          error: true,
+          message: 'Field ' + key + 'is obligatory',
+          field: key
+        };
+      } else if( Array.isArray(data[key]) && data[key].length == 0) {
+        return {
+          error: true,
+          message: 'Field ' + key + 'is obligatory',
+          field: key
+        };
+      } else if (key === 'creators') {
+        for (var i = 0; i < data[key].length; i++) {
+          var creator = data[key][i];
+          if( creator['givenName'] == '' ||creator['surname'] == ''
+            || creator['org'] == '') {
+            return {
+              error: true,
+              message: 'A creator must have a given name, surname and organization'
+            };
+          }
+        }
       }
     }
-
-    //Store eml data into document properties
-    prop.setProperty('eml-' + key, value);
   }
+
+  //Store eml data into document properties
+  prop.setProperty('eml', JSON.stringify(data));
+
+  return true;
 }
 
 /**
- * Returns the EML data stored in Documento properties
+ * Returns the EML data stored in Document properties
  * @return {array}
  */
 function getEMLData(){
-  var prop = PropertiesService.getDocumentProperties();
-  var data = {};
-
-  for(var i = 0; i < EML_KEYS.length; i++){
-    var key = EML_KEYS[i];
-    var value = prop.getProperty('eml-' + key);
-
-    if( key === 'creators'){
-      if( value ){
-        value = value.split('|');
-      }
-      else{
-        value = [];
-      }
-    }
-
-    else if( key === 'auto-taxonomic-coverage' || key === 'auto-geographic-coverage' || key === 'enable-manual-eml'){
-      value = (value == 'true');
-    }
-
-    else if( !value ){
-      value = '';
-    }
-
-    // Add value to data array
-    data[key] = value;
-  }
-
-  Logger.log(data);
-  return data;
+  var props = PropertiesService.getDocumentProperties();
+  var data = props.getProperty('eml');
+  return data ? JSON.parse(data) : {};
 }
 
 /**

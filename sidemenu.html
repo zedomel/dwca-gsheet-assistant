@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link href="https://ssl.gstatic.com/docs/script/css/add-ons.css" rel="stylesheet">  
+    <link href="https://ssl.gstatic.com/docs/script/css/add-ons.css" rel="stylesheet">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
-    
+
     <style>
       .branding-below {
          bottom: 56px;
@@ -18,64 +18,79 @@
               var select = $("#dynamic-list");
               var candidate = $("#candidate");
               var op = $(document.createElement("option"));
-              op.prop('value', candidate.val());  
+              op.prop('value', candidate.val());
               op.append(document.createTextNode(candidate.val()));
-              select.append(op);              
-              
+              select.append(op);
+
               //google.script.run.insertDS(candidate.val());
               candidate.val('');
            });
-           
+
            $('#remove').click(function(e){
-             $("#dynamic-list option:selected").remove(); 
+             $("#dynamic-list option:selected").remove();
            });
-           
+
            $('#print').click(function(e){
              var selected = $("#dynamic-list option:selected");
              if ( selected.length > 0 ){
                 google.script.run.printDS();
              }
            });
+
+           $('#save').click(function(e){
+            var settings = {
+              zenodoToken: $('#zenodoToken').val(),
+              enableZenodo: $('#enableZenodo').prop('checked')
+            };
+
+            google.script.run.saveSettings(settings);
+           });
         });
     </script>
   </head>
   <body>
+    <?
+      var props = PropertiesService.getUserProperties();
+      var enabled = props.getProperty('enableZenodo') === 'true';
+      var token = props.getProperty('zenodoToken');
+    ?>
+
     <div class="sidebar branding-below">
 
        <div classs="zenodo-settings">
           <div class="inline form-group">
-             <label for="zenodo-token">Zenodo Token:</label>
-             <input type="text" id="zenodo-token">
-          </div>       
+             <label for="zenodoToken">Zenodo Token:</label>
+             <input type="text" id="zenodoToken" value="<?= token ?>"/>
+          </div>
           <div>
-            <input type="checkbox" id="enable-zenodo">
-            <label for="enable-zenodo">Enable Zenodo Upload</label>
-          </div>      
+            <input type="checkbox" id="enableZenodo" <? if(enabled) { ?> checked <? } ?>/>
+            <label for="enableZenodo">Enable Zenodo Upload</label>
+          </div>
         </div>
-      
+
         <span class="separator"></span>
 
         <div class="standards">
           <div class="block">
             <input type="text" id="candidate"/>
-            <button id="add-item">Add item</button>       
+            <button id="add-item">Add item</button>
           </div>
-          
-          <div class="block form-group">            
+
+          <div class="block form-group">
             <label for="standards">Data Standards:</label>
             <? var standards = getStandards(); ?>
             <? for(var i = 0; i < standards.length; i++) { ?>
               <div>
-                <input type="checkbox" id="<?= i ?>">
+                <input type="checkbox" id="<?= i ?>" <? if(standards[i].checked) { ?> checked <? } ?>/>
                 <label for="<?= i ?>"><?= standards[i].name ?></label>
-              </div> 
+              </div>
             <? } ?>
 
             <select id="dynamic-list" size="5" style="width:100%;" multiple></select>
           </div>
           <button id="remove">Remove</button>
-          <button id="print">Print</button>       
-        </div>      
+          <button id="print">Print</button>
+        </div>
 
         <button id="save" class="action">Save</button>
       </div>

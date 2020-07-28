@@ -1,5 +1,17 @@
 <script>
     $(function() {
+
+        function savedEML(response) {
+            $('#save-eml').prop('disabled', false);
+            $('#save-eml').text('Save');
+
+            if (response && response.error) {
+                showOKAlert('Error', response.message);
+            } else {
+                google.script.host.close();
+            }
+        }
+
         $('#enable-manual-eml').change(function(e){
             $('.eml').toggle(!this.checked);
             $('.eml-editor').toggle(this.checked);
@@ -7,18 +19,25 @@
         // Fire event
         $('#enable-manual-eml').change();
 
+        $('#add-alternate-identifier').click(function(e){
+            var $identifer = $('<input class="form-control">');
+            $identifer.prop('id', 'alt-identifier-' + ($('.identifiers input').length+1));
+            $('.identifiers').append($identifer);
+        });
+
         // Add creator to creators list
         $('#add-creator').click(function(e){
-            var giveName = $('#creator-given-name').val(),
+            var givenName = $('#creator-given-name').val(),
                 surname = $('#creator-surname').val(),
                 email = $('#creator-email').val(),
-                org = $('#creator-institution-name').val();
+                org = $('#creator-organization-name').val();
 
-            if( giveName && surname ){
+            if( givenName && surname ){
                 var op = $(document.createElement("option"));
-                var value =  giveName + ";" + surname + ";" + email + ";" + org;
+                var value =  givenName + "|" + surname + "|" + org + "|" + email;
+                var text = givenName + " " + surname + " - " + org + "(" + email + ")";
                 op.prop('value', value);
-                op.append(document.createTextNode(value));
+                op.append(document.createTextNode(text));
                 $('#creators').append(op);
             }
         });
@@ -29,6 +48,9 @@
         });
 
         $('#save-eml').click(function(e){
+            $(this).prop('disabled', true);
+            $(this).text('Saving...');
+
             var data = {};
             $('input, select, textarea').each(function(){
                 var val;
@@ -45,11 +67,17 @@
             });
 
             data['creators'] = $('#creators option').map(function(){
-                return $(this).val();
+                var f = $(this).val().split('|');
+                return {
+                    givenName: f[0],
+                    surname: f[1],
+                    org: f[2],
+                    email: f[3]
+                }
             }).get();
 
             //Save EML
-            google.script.run.saveEML(data);
+            google.script.run.withSuccessHandler(savedEML).saveEML(data);
         });
     });
 </script>

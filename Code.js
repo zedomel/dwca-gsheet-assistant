@@ -109,7 +109,6 @@ function toggleMappingRow(){
   }
 
   // No DwC header. Add header row (mapping row)
-  Logger(hasDwCHeader);
   if (!hasDwCHeader) {
     var terms = documentProperties.getProperty('dwc').split(',');
     var rule = SpreadsheetApp.newDataValidation().requireValueInList(terms, true).build();
@@ -124,53 +123,13 @@ function toggleMappingRow(){
 }
 
 function loadDwC(){
-  var terms = xmltoArray();
-  terms.push('CORE_ID');
-  if ( terms.length > 0 ){
+  var dwc = xmltoArray();
+  dwc.terms.push('CORE_ID');
+  if ( dwc.terms.length > 0 ){
     var documentProperties = PropertiesService.getDocumentProperties();
-    documentProperties.setProperty('dwc', terms.toString());
+    documentProperties.setProperty('dwc', dwc.terms.toString());
+    documentProperties.setProperty('ns', JSON.stringify(dwc.namespaces));
   }
-}
-
-function uploadToZenodo(file){
-  var token = "LllHHyOUKAy8EfeoAxEYPd48qEjMOl1efwH4uRVusZeR0gS8Voq1SP3DzdGI";
-  var url = "https://sandbox.zenodo.org/api/deposit/depositions";
-  var data = {};
-  var options = {
-    'method' : 'post',
-    'contentType': 'application/json',
-    'headers': {
-      'Authorization': 'Bearer ' + token
-    },
-    // Convert the JavaScript object to a JSON string.
-    'payload' : JSON.stringify(data)
-  };
-  var response = UrlFetchApp.fetch(url, options);
-  Logger.log(response);
-  var result = JSON.parse(response.getContentText());
-  var id = result.id;
-  Logger.log(result);
-  Logger.log(id);
-
-  var formData = {
-    name: "eml.xml",
-    file: DriveApp.getFileById(file.getId()).getBlob()
-  };
-  var options = {
-    method: 'post',
-    //'contentType': 'multipart/form-data',
-    muteHttpExceptions : true,
-    headers: {
-      'Authorization': 'Bearer ' + token
-    },
-    payload : formData
-  };
-
-  var request = UrlFetchApp.getRequest(url + "/" + id + "/files",options);
-  Logger.log(request);
-  response = UrlFetchApp.fetch(url + "/" + id + "/files", options);
-  Logger.log(response.getContentText());
-
 }
 
 /**
@@ -182,7 +141,8 @@ function getStandards(){
   return [
     {
       name: "Darwin Core",
-      uri: "https://raw.githubusercontent.com/tdwg/dwc/master/docs/xml/tdwg_dwcterms.xsd"
+      uri: "https://raw.githubusercontent.com/tdwg/dwc/master/docs/xml/tdwg_dwcterms.xsd",
+      checked: true
     }
   ];
 }

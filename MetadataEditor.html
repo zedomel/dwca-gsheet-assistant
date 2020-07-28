@@ -9,12 +9,18 @@
 		<?
 			var mappedSheets = getMappedSheets();
 			var coreSheet = null;
+			var rowTypes = [];
 			for(var i = 0; i < mappedSheets.length; i++){
 				if(mappedSheets[i].core) {
 					coreSheet = mappedSheets[i];
 					break;
 				}
 			}
+
+			if (mappedSheets.length > 1) {
+				rowTypes = getRowTypes();
+			}
+
 		?>
 		<div class="dwca-metadata">
 			<? if( mappedSheets.length > 1) { ?>
@@ -31,11 +37,32 @@
 					</div>
 				</div>
 
-				<div class="relationship row">
-					<h5 class="col-12">Darwin Core Archive Schema</h5>
-					<div id="dwca-schema" class="row"></div>
-					<div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+				<div class="row">
+					<h5 class="col-12">Row Types</h5>
+					<? for(var i = 0; i < mappedSheets.length; i++) { ?>
+						<div class="form-group form-inline col-12">
+							<label><?= mappedSheets[i].name ?>:</label>
+							<select class="form-control rowtype" id="<?= mappedSheets[i].index ?>">
+								<option value=""></option>
+								<? for(var j = 0; j < rowTypes.length; j++) { ?>
+									<option value="<?= rowTypes[j] ?>" <? if(mappedSheets[i].rowType == rowTypes[j] ) { ?> selected <? } ?>><?= rowTypes[j] ?></option>
+								<? } ?>
+							</select>
+						</div>
+					<? } ?>
 				</div>
+
+				<!-- <div class="relationship row">
+					<h5 class="col-12">Darwin Core Archive Schema</h5>
+					<div id="dwca-schema" class="row">
+						<div class="text-center loading" style="display: none;">
+							<div class="spinner-border" role="status">
+								<span class="sr-only">Loading...</span>
+							</div>
+						</div>
+					</div>
+					<div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+				</div> -->
 			<? } ?>
 
 			<div class="generate-dwca">

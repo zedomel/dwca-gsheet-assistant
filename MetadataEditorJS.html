@@ -2,7 +2,7 @@
 
 <script>
 $(function(){
-    sigma.utils.pkg('sigma.canvas.nodes');
+    /* sigma.utils.pkg('sigma.canvas.nodes');
     sigma.canvas.nodes.image = (function() {
         var _cache = {},
         _loading = {},
@@ -63,47 +63,62 @@ $(function(){
 
         return renderer;
     })();
-
+    */
 
     function coreSheetSelected(response) {
         if (response && response.error) {
             $('#coreSheetIndex').val('');
+            // $('.loading').hide();
             showOKAlert('Error', response.message);
-        } else {
-            google.script.run.withSuccessHandler(updateDwcArchive).getDwCArchiveSchema();
         }
+        // else {
+        //     google.script.run.withSuccessHandler(updateDwcArchive).getDwCArchiveSchema();
+        // }
     }
 
     function dwcArchiveGenerated(response) {
+        $(this).prop('disabled', false);
+        $(this).text('Generate DwC-Archive');
         if (response && response.error) {
             showOKAlert('Alert', response.message);
-        } else {
-
         }
     }
 
-    function updateDwcArchive(dwcArchiveSchema) {
-        dwcaSchema.graph.clear();
-        dwcaSchema.graph.read(dwcArchiveSchema);
-        dwcaSchema.refresh();
-    }
+    // function updateDwcArchive(dwcArchiveSchema) {
+    //     $('.loading').hide();
+    //     dwcaSchema.graph.clear();
+    //     dwcaSchema.graph.read(dwcArchiveSchema);
+    //     dwcaSchema.refresh();
+    // }
 
     //Initialize DwC-Archive Graph
-    var dwcaSchema = new sigma('dwca-schema');
-    if ($('#coreSheetIndex').val() > 0) {
-        google.script.run.withSuccessHandler(updateDwcArchive).getDwCArchiveSchema();
-    }
+    // var dwcaSchema = new sigma('dwca-schema');
+    // if ($('#coreSheetIndex').val() > 0) {
+    //     google.script.run.withSuccessHandler(updateDwcArchive).getDwCArchiveSchema();
+    // }
 
     $('#coreSheetIndex').change(function(e){
         var sheetIndex = $(this).val();
         if (sheetIndex > 0) {
+            // $('.loading').show();
             google.script.run.withSuccessHandler(coreSheetSelected).setCoreSheet(sheetIndex);
         }
     });
 
-    $('#generate-dwca').click(function(e){
-        if ($('#coreSheetIndex').val() > 0) {
+    $('.rowtype').change(function(e){
+        var rowType = $(this).val();
+        var sheetIndex = $(this).prop('id');
+        if (rowType != '' && sheetIndex > 0) {
+            google.script.run.setRowType(rowType, sheetIndex);
+        }
+    });
+
+    $('#generate-dwca').click(function(e) {
+        var rowTypes = $('.rowtype option:selected').filter(function(){ return $(this).val() != ''});
+        if ($('#coreSheetIndex').val() > 0 && rowTypes.length == $('.rowtype').length) {
             // Generate DwC-Archive
+            $(this).prop('disabled', true);
+            $(this).text('Creating DwC-Archive...');
             google.script.run.withSuccessHandler(dwcArchiveGenerated).generateDwCA();
         }
     });

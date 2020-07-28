@@ -10,12 +10,21 @@
 		<? var data = getEMLData(); ?>
 		<div class="eml">
 			<div class="inline form-group">
-  				<label for="title">Title</label>
+  				<label for="title">Title*</label>
   				<input type="text" id="title" class="form-control-plaintext" value="<?= data['title']; ?>">
 			</div>
 
+            <div class="alternate-identifiers">
+                <div class="form-group">
+                    <label>Alternate Identifiers</label>
+                    <button id="add-alternate-identifier">Add</button>
+                    <div class="identifiers form-group"></div>
+                </div>
+            </div>
+
 			<div class="creators margin-bottom">
-  				<h6>Creators:</h6>
+  				<h6>Creators:*</h6>
+                <p>The first author will be the contact author</p>
   				<div>
 	  				<div class="inline form-group">
 	  					<label for="creator-given-name">Given name</label>
@@ -32,8 +41,8 @@
 						<input type="text" id="creator-email"/>
 					</div>
 					<div class="inline form-group">
-						<label for="creator-institution-name">Institution name</label>
-						<input type="text" id="creator-institution-name"/>
+						<label for="creator-organization-name">Organization name</label>
+						<input type="text" id="creator-organization-name"/>
 					</div>
 				</div>
 				<button id="add-creator">Add creator</button>
@@ -43,8 +52,12 @@
 				<div class="block form-group">
 			  		<select id="creators" size="5" class="custom-select" multiple>
 			  			<? if( data['creators'].length > 0 ) { ?>
-			  				<? for(var i = 0; i < data['creators'].length; i++ ) { ?>
-			  					<option value="<?= data['creators'][i] ?>"><?= data['creators'][i] ?></option>
+			  				<? for(var i = 0; i < data['creators'].length; i++ ) {
+                                var creator = data['creators'][i];
+                                var value =  creator['givenName'] + "|" + creator['surname'] + "|" + creator['org'] + "|" + creator['email'];
+                                var text = creator['givenName'] + " " + creator['surname'] + " - " + creator['org'] + "(" + creator['email'] + ")";
+                                ?>
+			  					<option value="<?= value ?>"><?= text ?></option>
 			  				<? } ?>
 			  			<? } ?>
 			  		</select>
@@ -54,7 +67,7 @@
 
 
 			<div class="form-group">
-  				<h6>Data Prodiver:</h6>
+  				<h6>Data Prodiver:*</h6>
   				<div class="inline form-group">
   					<label for="given-name">Given name</label>
   					<input type="text" id="given-name" value="<?= data['given-name'] ?>">
@@ -72,26 +85,31 @@
 
 			<div class="form-group">
 				<div class="inline form-group">
-					<label for="institution-name">Institution name</label>
-					<input type="text" id="institution-name" value="<?= data['institution-name'] ?>">
+					<label for="organization-name">Organization name*</label>
+					<input type="text" id="organization-name" value="<?= data['organization-name'] ?>">
 				</div>
 
-				<div class="inline form-group">
-					<label for="institution-code">Institution code</label>
-					<input type="text" id="institution-code" value="<?= data['institution-code'] ?>">
-				</div>
+				<!-- <div class="inline form-group">
+					<label for="organization-code">Organization code</label>
+					<input type="text" id="organization-code" value="<?= data['organization-code'] ?>">
+				</div> -->
 
-				<div class="inline form-group">
+				<!-- <div class="inline form-group">
 					<label for="dataset-name">Dataset name</label>
 					<input type="text" id="dataset-name" value="<?= data['dataset-name'] ?>">
-				</div>
+				</div> -->
 			</div>
 
+            <div class="form-group">
+                <label for="abstract">Abstract (description of the dataset)*</label>
+                <textarea id="abstract" rows="5" class="form-control"><?= data['abstract'] ?></textarea>
+            </div>
+
 			<div class="form-group">
-				<div class="inline form-group">
+				<!-- <div class="inline form-group">
 					<label for="dataset-id">Dataset ID</label>
 					<input type="text" id="dataset-id" value="<?= data['dataset-id'] ?>">
-				</div>
+				</div> -->
 
 				<div class="inline form-group">
 					<label for="keywords">Keywords (separared by ;)</label>
@@ -100,20 +118,15 @@
 			</div>
 
 			<div class="form-group">
-  				<label for="abstract">Abstract (description of the dataset)</label>
-  				<textarea id="abstract" rows="5" class="form-control"><?= data['abstract'] ?></textarea>
-			</div>
-
-			<div class="form-group">
   				<label for="additional-info">Additional information</label>
   				<textarea id="additional-info" rows="5" class="form-control"><?= data['additional-info'] ?></textarea>
 			</div>
 
-			<div class="form-group">
+			<!-- <div class="form-group">
   				<label for="taxonomic-coverage">General taxonomic coverage</label>
   				<textarea id="taxonomic-coverage" rows="5" class="form-control"><?= data['taxonomic-coverage'] ?></textarea>
-			</div>
-			<div>
+			</div> -->
+			<!-- <div>
   				<input type="checkbox" id="auto-taxonomic-coverage" <? if(data['auto-taxonomic-coverage']) { ?> checked <? } ?>>
   				<label for="auto-taxonomic-coverage">Auto generate taxonomic coverage from field:
   					<div class="inline form-group">
@@ -125,24 +138,23 @@
 				  		</select>
 					</div>
 				</label>
-			</div>
+			</div> -->
 
-			<div class="form-group">
+			<!-- <div class="form-group">
   				<label for="geographic-coverage">General geographic coverage</label>
   				<textarea id="geographic-coverage" rows="5" class="form-control"><?= data['geographic-coverage'] ?></textarea>
-			</div>
-			<div>
+			</div> -->
+			<!-- <div>
   				<label for="auto-geographic-coverage">
   					<input type="checkbox" id="auto-geographic-coverage" <? if (data['auto-geographic-coverage']) { ?> checked <? } ?>>
   					Auto generate geographic coverage from dwc:decimalLongitude and dwc:decimalLatitude fields?
   				</label>
-			</div>
+			</div> -->
 
-
-			<div class="form-group">
+			<!-- <div class="form-group">
   				<label for="purpose">Purpose</label>
   				<textarea id="purpose" rows="5" class="form-control"><?= data['purpose'] ?></textarea>
-			</div>
+			</div> -->
 
 			<div class="form-group">
   				<label for="rights">Intellectual rights</label>
@@ -152,6 +164,7 @@
 			<div class="block form-group">
 			  <label for="lang">Metadata language</label>
 			  <select id="lang">
+                <option value=""></option>
 			  	<option value="en" <? if(data['lang'] == 'en') { ?> selected <? } ?>>en - English</option>
 			  	<option value="pt" <? if(data['lang'] == 'pt') { ?> selected <? } ?>>pt - Portuguese</option>
 			    <option value="es" <? if(data['lang'] == 'es') { ?> selected <? } ?>>es - Spanish</option>
