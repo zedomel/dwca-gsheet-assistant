@@ -1,8 +1,8 @@
 // "YTUdjM4SvSZrYjwNqFaglSw9NFbDcpkb6dQiZ9Pfmeej9C1PsskWrIU67MLJ";
 
 
-const ROOT_FOLDER = "GBIF-DWCA";
-const PROP_FOLDER_KEY = "gbif-dwca-folder-key";
+const ROOT_FOLDER = "DWCA-ADDON";
+const PROP_FOLDER_KEY = "dwca-addon-folder-key";
 
 /* What should the add-on do after it is installed */
 function onInstall(e) {
