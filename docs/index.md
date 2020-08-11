@@ -7,7 +7,7 @@ layout: default
 
 # Rationale
 
-Most biologists and biodiversity data managers organize their data into spreadsheets and for thoses whom are not familiary with Information Science practices of data standardization, the usage of complex software to assist the creation of standardized datasets can be painful, or even prohibited.
+Most biologists and biodiversity data managers organize their data into spreadsheets and for thoses whom are not familiar with Information Science practices of data standardization, the usage of complex software to assist the creation of standardized datasets can be painful, or even prohibited.
 
 Based on that, the Google Sheet Add-on available here searches to explore the familiarity of the users with spreadsheets and allow them to create and publish standardized biodiversity data using Darwin Core Standard.
 The add-on aims to provided a simple and intuitive interface for users not familiary with the concepts of Darwin Core Standard (DwC) and data sharing using Darwin Core Archives. 
@@ -49,7 +49,7 @@ To add or remove a mapping row from a sheet select the option *Add/Remove mappin
 The Darwin Core Archive is used to represent complex structures within data (one-to-many relations) by the definition of a **star schema**. For that reason, a special term `CORE_ID` is available on the mapping row list of terms. Using the `CORE_ID` term is possible to "link" or represeting the relations between data in different sheets. Records (i.e. rows) from different sheets can be linked into a one-to-many relation by mapping a column to the `CORE_ID` term in all related sheets. Two or more columns in different sheets which have the `CORE_ID` term by definition of Darwin Core Archive Standard have to be filled same value (see figure bellow as an example).
 
 ![The CORE_ID term](/assets/img/core-id-term.png)
-*The row in the left sheet with `CORE_ID` `2787` is liked to the two rows of the right sheet, creating a one-to-many relation between sheets. The left sheet after will be selected as the **core sheet** and the right sheet as **extension sheet** in DwC-Archive nomenclature*
+*The row in the left sheet with `CORE_ID` `2787` is linked to the two rows of the right sheet, creating a one-to-many relation between sheets. The left sheet after will be selected as the **core sheet** and the right sheet as **extension sheet** in DwC-Archive nomenclature*
 
 ## Ecological Metadata Language Editor
 
