@@ -21,6 +21,7 @@ description: >- # this means to ignore newlines until "baseurl:"
         to Zenodo. DwCA's are stored into user's Google Drive and can be downloaded
         for upload into IPT installations or other software which is able to read
         DwC-archives.
+        Install it from: [http://gsuite.google.com/marketplace/app/appname/567341081140](http://gsuite.google.com/marketplace/app/appname/567341081140)
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://dwcaassistant.com" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb

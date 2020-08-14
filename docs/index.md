@@ -14,13 +14,23 @@ The add-on aims to provided a simple and intuitive interface for users not famil
 
 The data in a spreadsheet can be easily mapped to DwC terms and the add-on can handle one-to-many relations between data records by the use of `CORE_ID` special *term*.
 
-**NOTE:** the add-on is still in process of publication into Google Suite MarketPlace. But, it can be accessed and tested using the follow link: [https://script.google.com/d/1ZOflRjoisWns4LC-wvH2wJ7EdjYqlS0nOYTvpuMovE_99l9MW6AkKgGT/edit?usp=sharing](https://script.google.com/d/1ZOflRjoisWns4LC-wvH2wJ7EdjYqlS0nOYTvpuMovE_99l9MW6AkKgGT/edit?usp=sharing).
-
 # Installation
 
-## Adding the Add-on from Google MarketPlace
+## Adding the Add-on from G Suite Marketplace
 
-Google Suite MarketPlace publication is in process. The add-on is being revised by Google.
+Access the Add-on at *G Suite Marketplace* by the follow link [ http://gsuite.google.com/marketplace/app/appname/567341081140]( http://gsuite.google.com/marketplace/app/appname/567341081140). 
+
+Accept the permissions to the Add-on access user's Google Drive and Google Sheet aplications.
+
+## Instaling from Google Sheet
+
+After opening the Google Sheet application, access the menu `Add-ons`->`Get add-ons`. In the *G Suite Marketplace* search for `Darwin Core Archive Assistant` and click `Install`. Follow the steps to accept the permissions.
+
+**After installed the Add-on will be available for all Google Sheet documents. But it needs to be enabled for each document you are editing.**
+
+# Enable the Add-on
+
+After installed, the Add-on must be enable for a single document by selectiong the menu option `Add-ons`->`Darwin Core Archive Assistant`->`Start DwC-A`.
 
 # Quick Guide
 
