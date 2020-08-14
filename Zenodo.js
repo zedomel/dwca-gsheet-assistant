@@ -1,4 +1,4 @@
-const ZENODO_API_URL = 'https://sandbox.zenodo.org/api';
+const ZENODO_API_URL = 'https://zenodo.org/api';
 
 function createZenodoDeposition_() {
     var props = PropertiesService.getUserProperties();
